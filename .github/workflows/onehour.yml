@@ -1,26 +1,30 @@
-name: Run Crawlers Every Hour
+name: Run All Crawlers Every 1 Hour
 
 on:
   schedule:
-    - cron: '0 * * * *'  # 每小時執行一次
-  push:
-    branches:
-      - main
+    - cron: '0 * * * *'  # 每 1 小時執行一次 (整點)
+  workflow_dispatch:  # 允許手動觸發
 
 jobs:
-  run_onehour_crawler:
+  run_crawlers:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: 🐍 Set Up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: '3.10'
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: 📦 Install Dependencies
+        run: |
+          pip install -r requirements.txt
 
-      - name: Run onehour crawlers
-        run: python news_onehour/your_onehour_script.py
+      - name: 🕷 Run All Python Scripts in news_onehour
+        run: |
+          for script in news_onehour/*.py; do
+            echo "Running $script..."
+            python "$script"
+          done
